@@ -2,7 +2,14 @@ name: Daily AI Report
 on:
   schedule:
     - cron: '0 0 * * *'  # UTC 0点 = 北京时间8点
+  push:
+    branches: [ main ]
   workflow_dispatch:  # 手动触发
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   generate-report:
@@ -26,9 +33,29 @@ jobs:
           OPENCLAW_API_KEY: ${{ secrets.OPENCLAW_API_KEY }}
         run: python main.py
         
+      - name: Copy latest report to index.html
+        run: cp $(ls -t daily_report_*.html | head -1) index.html
+          
       - name: Upload report as artifact
         uses: actions/upload-artifact@v4
         with:
           name: daily-report
-          path: '*.html'
+          path: |
+            *.html
           retention-days: 30
+          
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+  deploy:
+    needs: generate-report
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
