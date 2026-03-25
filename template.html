@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 每日情报 | {{ date }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .card {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        .news-item:hover {
+            transform: translateX(8px);
+            transition: all 0.3s ease;
+        }
+        .repo-card:hover {
+            transform: translateY(-4px);
+            transition: all 0.3s ease;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+<body class="py-8 px-4">
+    <div class="max-w-4xl mx-auto">
+        <!-- 头部 -->
+        <div class="card p-8 mb-8 text-center">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">🤖 AI 每日情报</h1>
+            <p class="text-gray-600 text-lg">{{ date }} | 每天 8:00 准时推送</p>
+        </div>
+
+        <!-- 今日要闻 -->
+        <div class="card p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                <i class="fa fa-newspaper-o text-purple-600 mr-3"></i>
+                今日 AI 要闻
+            </h2>
+            <div class="space-y-4">
+                {% for news in news_list %}
+                <div class="news-item p-4 bg-gray-50 rounded-lg border-l-4 border-purple-500 cursor-pointer">
+                    <h3 class="font-semibold text-lg text-gray-800 mb-2">{{ news.title }}</h3>
+                    <p class="text-gray-600">{{ news.summary }}</p>
+                    {% if news.url %}
+                    <a href="{{ news.url }}" target="_blank" class="text-purple-600 text-sm mt-2 inline-flex items-center">
+                        查看原文 <i class="fa fa-external-link ml-1"></i>
+                    </a>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- GitHub 热门项目 -->
+        <div class="card p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                <i class="fa fa-github text-gray-800 mr-3"></i>
+                GitHub 热门 AI 项目
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for repo in repo_list %}
+                <div class="repo-card p-5 bg-gray-50 rounded-lg border border-gray-200">
+                    <div class="flex justify-between items-start mb-3">
+                    <h3 class="font-bold text-lg text-gray-800">
+                        <a href="https://github.com/{{ repo.full_name }}" target="_blank" class="hover:text-purple-600">
+                            {{ repo.name }}
+                        </a>
+                    </h3>
+                    <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full flex items-center">
+                        <i class="fa fa-star mr-1"></i> {{ repo.stars }}
+                    </span>
+                </div>
+                <p class="text-gray-600 text-sm mb-3">{{ repo.description }}</p>
+                <div class="flex items-center text-xs text-gray-500">
+                    <span class="mr-4 flex items-center">
+                        <i class="fa fa-code-fork mr-1"></i> {{ repo.forks }}
+                    </span>
+                    <span class="flex items-center">
+                        <i class="fa fa-language mr-1"></i> {{ repo.language }}
+                    </span>
+                </div>
+            </div>
+            {% endfor %}
+            </div>
+        </div>
+
+        <!-- 底部 -->
+        <div class="card p-6 text-center text-gray-600 text-sm">
+            <p>© 2024 AI 每日情报 | 自动生成，祝您今天也是元气满满 🚀</p>
+        </div>
+    </div>
+</body>
+</html>
